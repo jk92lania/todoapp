@@ -23,9 +23,13 @@
 
 </template>
 <script>
-import {ref} from 'vue'
+import {
+    ref
+    } from 'vue'
 export default {
-    setup(props, context) {
+    
+    emits : ['add-todo'],
+    setup(props, {emit}) {
         
         const todo = ref('');
         // 내용 입력 안내창 여부
@@ -41,7 +45,7 @@ export default {
                 // 할일의 내용을 배열로 추가한다
                 // 이 때 상위 컴포넌트로 전달
                 // context.emit('이벤트', {데이터});
-                context.emit('add-todo', {
+                emit('add-todo', {
                     id : Date.now(),
                     subject : todo.value,
                     complete : false

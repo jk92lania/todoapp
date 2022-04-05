@@ -31,9 +31,27 @@
 </template>
 <script>
 export default {
-    props : ['todos'],
-    setup() {
-        
+    props : {
+        todos : {
+            type : Array,
+            required : true
+        }
+    },
+    emits : ['toggle-todo', 'delete-todo'],
+
+    setup(props, {emit}) {
+        const toggleTodo = (index) => {
+            // console.log(index);
+            emit('toggle-todo', index);
+        }
+        const deleteTodo = (index) => {
+            // console.log(index);
+            emit('delete-todo', index);
+        }
+        return {
+            toggleTodo,
+            deleteTodo
+        }
     },
 }
 </script>

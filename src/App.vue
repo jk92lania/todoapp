@@ -10,7 +10,7 @@
     <div v-if="!todos.length" class="red">생성된 Todo 목록이 없습니다.</div>
 
     <!-- todo 목룍창 -->
-    <TodoList v-bind:todos="todos"/>
+    <TodoList v-bind:todos="todos" v-on:toggle-todo="toggleTodo" v-on:delete-todo="deleteTodo"/>
     
   </div>  
 
@@ -46,6 +46,10 @@ export default {
     const addTodo = (todo) => {
       todos.value.push(todo);
     }
+
+    const toggleTodo = (index) => {
+      todos.value[index].completed != todos.value[index].completed;
+    }
     
     const deleteTodo = (index) => {
       // console.log('delete' + index);
@@ -57,6 +61,7 @@ export default {
       todos,
       todoStyle,
       addTodo,
+      toggleTodo,
       deleteTodo
     }
   }
