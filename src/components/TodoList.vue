@@ -1,5 +1,5 @@
 <template>
-    목록입니다.
+    <!-- 목록입니다. -->
     <div 
     class="card mt-2" 
     v-for="(todo, index) in todos"
@@ -10,15 +10,15 @@
           <input 
           type="checkbox" 
           class="from-check-input" 
-          v-model="todo.complete"
+          v-bind:checked="todo.complete"
           v-bind:id="todo.id"
+          v-on:chang="toggleTodo(index)"
           >
           <!-- <label class="form-check-label" v-bind:style="todo.complete ? todoStyle : {}">{{ todo.subject }}</label> -->
           <label 
           class="form-check-label" 
           v-bind:class="{todocss : todo.complete}"
-          v-bind:for="todo.id"
-          >
+          v-bind:for="todo.id">
           {{ todo.subject }}
           </label>
         </div>
