@@ -12,7 +12,7 @@
           class="from-check-input" 
           v-bind:checked="todo.complete"
           v-bind:id="todo.id"
-          v-on:chang="toggleTodo(index)"
+          v-on:change="toggleTodo(index)"
           >
           <!-- <label class="form-check-label" v-bind:style="todo.complete ? todoStyle : {}">{{ todo.subject }}</label> -->
           <label 
