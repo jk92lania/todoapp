@@ -1,14 +1,15 @@
 <template>  
   <div class="container">    
     
-    <h1>TODO LIST</h1>
+    <AppTitle :apptitle="apptext"/>
     <!-- 할일 검색 입력창 -->
     <input v-model="searchText" type="text" class="form-control" placeholder="Search Todo list">
-    <div class="red">{{ error }}</div>
+    <ErrorBox :errtext="error" />
+  
     <hr />
 
     <!-- 할일 추가 입력창 -->
-    <TodoSimpleForm v-on:add-todo="addTodo"/>
+    <TodoSimpleForm @add-todo="addTodo"/>
     
 
    
@@ -16,28 +17,11 @@
     <div v-if="!todos.length" class="red">생성된 Todo 목록이 없습니다.</div>
 
     <!-- todo 목룍창 -->
-    <TodoList v-bind:todos="todos" v-on:toggle-todo="toggleTodo" v-on:delete-todo="deleteTodo"/>
+    <TodoList :todos="todos" @toggle-todo="toggleTodo" @delete-todo="deleteTodo"/>
     
 
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item" v-if="nowPage !== 1">
-          <a class="page-link" @click="getTodo(nowPage - 1)" style="cursor:pointer">Previous</a>
-        </li>
-        <li 
-        class="page-item" 
-        v-for="count in numberOfPages" 
-        v-bind:key="count" 
-        v-bind:class="nowPage === count?'active':''"
-
-        >
-          <a class="page-link" @click="getTodo(count)" style="cursor:pointer">{{count}}</a>
-          </li>
-        <li class="page-item"  v-if="nowPage !== numberOfPages">
-          <a class="page-link" @click="getTodo(nowPage + 1)" style="cursor:pointer">Next</a>
-          </li>
-      </ul>
-    </nav>
+    <!-- pagination -->
+    <AppPagination :currentPage="nowPage" :allPage="numberOfPages" @page-show="getTodo"/>
 
   </div>  
 
@@ -50,14 +34,22 @@ import axios from 'axios'
 
 import TodoSimpleForm from './components/TodoSimpleForm.vue'
 import TodoList from './components/TodoList.vue'
+import AppTitle from './components/AppTitle.vue'
+import ErrorBox from './components/ErrorBox.vue'
+import AppPagination from './components/AppPagination.vue'
 
 export default {
   components : {
     TodoSimpleForm,
-    TodoList
+    TodoList,
+    AppTitle,
+    ErrorBox,
+    AppPagination
   },
 
-  setup(){    
+  setup(){   
+    // title
+    const apptext = ref('오늘 할 일'); 
 
 
     // 할일 목록(배열)을 저장
@@ -157,6 +149,7 @@ export default {
       error.value = '';
 
       try {
+        console.log(id);
         await axios.delete('http://localhost:3000/todos/' + id);
         getTodo();
       } catch(err) {
@@ -169,6 +162,8 @@ export default {
     
 
     return {
+      apptext,
+
       todos,
       addTodo,
       toggleTodo,
