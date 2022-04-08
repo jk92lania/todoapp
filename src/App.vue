@@ -16,15 +16,36 @@
     <div v-if="!todos.length" class="red">생성된 Todo 목록이 없습니다.</div>
 
     <!-- todo 목룍창 -->
-    <TodoList v-bind:todos="filteredTodo" v-on:toggle-todo="toggleTodo" v-on:delete-todo="deleteTodo"/>
+    <TodoList v-bind:todos="todos" v-on:toggle-todo="toggleTodo" v-on:delete-todo="deleteTodo"/>
     
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" v-if="nowPage !== 1">
+          <a class="page-link" @click="getTodo(nowPage - 1)" style="cursor:pointer">Previous</a>
+        </li>
+        <li 
+        class="page-item" 
+        v-for="count in numberOfPages" 
+        v-bind:key="count" 
+        v-bind:class="nowPage === count?'active':''"
+
+        >
+          <a class="page-link" @click="getTodo(count)" style="cursor:pointer">{{count}}</a>
+          </li>
+        <li class="page-item"  v-if="nowPage !== numberOfPages">
+          <a class="page-link" @click="getTodo(nowPage + 1)" style="cursor:pointer">Next</a>
+          </li>
+      </ul>
+    </nav>
+
   </div>  
 
 
 </template>
 
 <script>
-import {computed, ref} from 'vue';
+import {computed, ref, watch} from 'vue';
 import axios from 'axios'
 
 import TodoSimpleForm from './components/TodoSimpleForm.vue'
@@ -44,15 +65,44 @@ export default {
 
     const error = ref('');
 
+    // 페이지네이션
+    // 전체 todos 개수가 필요
+    const totalTodos = ref(0);
+    // 한 화면당 보여줄 todo
+    const limit = 5;
+    // 현재 보여주는 펴이지 번호
+    const nowPage = ref(1);
+    // 총페이지 숫자
+    const numberOfPages = computed( () => {
+      return Math.ceil(totalTodos.value / limit);
+    });
+   
+
+    // 할일 검색 관련
+    const searchText = ref('');
+    watch(searchText, () => {
+      getTodo(1)
+    });
+    
     // DB에서 자료 불러오기
-    const getTodo = async () => {
+    const getTodo = async (page = nowPage.value) => {
       error.value = '';
+      nowPage.value = page;
       try {
         // 서버에서 자료 요청 진행 후 결과
         // res에서 받는다(response)
-        const res = await axios.get("http://localhost:3000/todos");
+        const res = await axios.get(`http://localhost:3000/todos?subject_like=${searchText.value}&_page=${page}&_limit=${limit}&_sort=id&_order=desc`);
+
+        // console.log(res.headers);
+        totalTodos.value = res.headers["x-total-count"];
+        if(nowPage.value > numberOfPages.value) {
+          getTodo(nowPage.value - 1);
+          return
+        }
+
 
         todos.value = res.data;
+        // 전달된 값을 page로 받아들임
 
       } catch (err) {
         console.log(err);
@@ -69,12 +119,11 @@ export default {
         error.value = '';
         try {
           // 데이터 베이스에 저장이 되어야 하는 데이터
-          const res = await axios.post('http://localhost:3000/todos', {         
+          await axios.post('http://localhost:3000/todos', {         
             subject: 추가되는할일.subject,
             complete: 추가되는할일.complete 
           });
-
-          todos.value.push(res.data);
+          getTodo(1);
 
         }catch(err) {
           console.log(err);
@@ -108,30 +157,16 @@ export default {
       error.value = '';
 
       try {
-        axios.delete('http://localhost:3000/todos/' + id);
-        todos.value.splice(index, 1);
+        await axios.delete('http://localhost:3000/todos/' + id);
+        getTodo();
       } catch(err) {
         console.log(err);
         error.value = "삭제에 실패했습니다.";
       }
     }
 
-    // 할일 검색 관련
-    const searchText = ref('');
 
-    // 검색에 따른 목록을 갱신해 주는 기능 생성
-    const filteredTodo = computed(()=>{
-      // 만약에 serchText와 동일한 todos 목록에 있는지를 검사
-      // 화면 출력
-      if(searchText.value) {
-        return todos.value.filter((todoitem)=>{
-          return todoitem.subject.includes(searchText.value);
-        });
-
-      }
-      return todos.value;
-    });
-
+    
 
     return {
       todos,
@@ -140,8 +175,12 @@ export default {
       deleteTodo,
 
       searchText,
-      filteredTodo,
-      error
+      error,
+
+      totalTodos,
+      nowPage,
+      numberOfPages,
+      getTodo
     }
   }
 }
