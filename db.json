@@ -16,11 +16,6 @@
       "id": 5
     },
     {
-      "subject": "1",
-      "complete": false,
-      "id": 25
-    },
-    {
       "subject": "3",
       "complete": false,
       "id": 27
@@ -67,28 +62,13 @@
     },
     {
       "subject": "천둥",
-      "complete": false,
+      "complete": true,
       "id": 46
     },
     {
       "subject": "번개",
       "complete": false,
       "id": 47
-    },
-    {
-      "subject": "1",
-      "complete": false,
-      "id": 48
-    },
-    {
-      "subject": "2",
-      "complete": false,
-      "id": 49
-    },
-    {
-      "subject": "3",
-      "complete": false,
-      "id": 50
     },
     {
       "subject": "4",

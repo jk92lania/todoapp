@@ -1,59 +1,88 @@
 <template>
-    <!-- 목록입니다. -->
-    <div 
-    class="card mt-2" 
-    v-for="(todo, index) in todos"
-    v-bind:key ="todo.id"
-    >
-      <div class="car-body p-2 d-flex">
-        <div class="form-check flex-grow-1">
-          <input 
-          type="checkbox" 
-          class="from-check-input" 
-          v-bind:checked="todo.complete"
-          v-bind:id="todo.id"
-          v-on:change="toggleTodo(index)"
-          >
-          <!-- <label class="form-check-label" v-bind:style="todo.complete ? todoStyle : {}">{{ todo.subject }}</label> -->
-          <label 
-          class="form-check-label" 
-          v-bind:class="{todocss : todo.complete}"
-          v-bind:for="todo.id">
-          {{ todo.subject }}
-          </label>
+
+    <div class="card mt-2" v-for="(todo, index) in todos" v-bind:key="todo.id">
+        
+        <div 
+            class="card-body p-2 d-flex"
+            @click="moveToPage(todo.id)"
+        >
+
+            <div class="form-check flex-grow-1">
+                <input 
+                    type="checkbox" 
+                    class="form-check-input" 
+                    :checked="todo.complete" 
+                    :id="todo.id" 
+                    @change="toggleTodo(index, $event)"
+                    @click.stop
+                >
+                <label 
+                    class="form-check-label" 
+                    v-bind:class="{ todocss : todo.complete }" 
+                    v-bind:for="todo.id">
+                    {{ todo.subject }}
+                </label>
+            </div>
+            <!-- 삭제버튼 -->
+            <div>
+                <button 
+                    class="btn btn-danger btn-sm" 
+                    @click.stop="deleteTodo(index)"
+                >
+                    Delete
+                </button>
+            </div>
+
         </div>
-        <!-- 삭제버튼 -->
-        <div>
-          <button class="btn btn-danger btn-sm" @click="deleteTodo(index)">Delete</button>
-        </div>
-      </div>
+
     </div>
 </template>
 <script>
-export default {
-    props : {
-        todos : {
-            type : Array,
-            required : true
-        }
-    },
-    emits : ['toggle-todo', 'delete-todo'],
+    import { useRouter} from 'vue-router' 
 
-    setup(props, {emit}) {
-        const toggleTodo = (index) => {
-            // console.log(index);
-            emit('toggle-todo', index);
+    export default {
+        // props: ['todos']
+        props: {
+            todos: {
+                type: Array,
+                required: true
+            }
+        }, 
+
+        emits: ['toggle-todo', 'delete-todo'],
+
+        setup(props, {emit}){
+
+            const router = useRouter();
+
+            const toggleTodo = (index, event) => {
+                // console.log(index);
+                emit('toggle-todo', index, event.target.checked);
+            };
+            const deleteTodo = (index) => {
+                emit('delete-todo', index);
+            };
+
+            // 클릭된 id 를 전달한다.
+            const moveToPage = (todoId) => {
+                // console.log(todoId);
+                // 아이디를 전달한다.
+                // router.push('/todos/' + todoId);
+                router.push({
+                    name: 'Todo',
+                    params: {
+                        id: todoId
+                    }
+                });
+            }
+
+            return {
+                toggleTodo,
+                deleteTodo,
+                moveToPage
+            }
         }
-        const deleteTodo = (index) => {
-            // console.log(index);
-            emit('delete-todo', index);
-        }
-        return {
-            toggleTodo,
-            deleteTodo
-        }
-    },
-}
+    }
 </script>
 <style>
 
