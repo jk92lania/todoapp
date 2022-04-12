@@ -1,11 +1,11 @@
 <template>  
-  <!-- 라우터 화면 보여주기 -->
-  <router-view />
+
 
   <div class="container"> 
 
     
     <AppTitle :apptitle="apptext"/>
+    
     <!-- 할일 검색 입력창 -->
     <input v-model="searchText" type="text" class="form-control" placeholder="Search Todo list" @keyup.enter="searchTodo">
     <ErrorBox :errtext="error" />
