@@ -3,8 +3,11 @@
 
   <div class="container"> 
 
-    
-    <AppTitle :apptitle="apptext"/>
+    <!-- 타이틀 -->
+    <div class="d-flex justify-content-between mt-3 mb-3">
+      <AppTitle :apptitle="apptext" />
+      <button class="btn btn-primary btn-sm" @click="moveToCreate">할일 등록</button>
+    </div>
     
     <!-- 할일 검색 입력창 -->
     <input v-model="searchText" type="text" class="form-control" placeholder="Search Todo list" @keyup.enter="searchTodo">
@@ -13,7 +16,7 @@
     <hr />
 
     <!-- 할일 추가 입력창 -->
-    <TodoSimpleForm @add-todo="addTodo"/>
+    <!-- <TodoSimpleForm @add-todo="addTodo"/> -->
     
 
    
@@ -27,31 +30,52 @@
     <!-- pagination -->
     <AppPagination :currentPage="nowPage" :allPage="numberOfPages" @page-show="getTodo"/>
 
+    <ToastBox v-if="showToast" :message="toastMessage" :type="toastAlertType"/>
+
   </div>  
 
 
 </template>
 
 <script>
-import {computed, ref, watch} from 'vue';
+import {computed, ref, watch } from 'vue';
 import axios from 'axios'
 
-import TodoSimpleForm from '@/components/TodoSimpleForm.vue'
+// import TodoSimpleForm from '@/components/TodoSimpleForm.vue'
 import TodoList from '@/components/TodoList.vue'
 import AppTitle from '@/components/AppTitle.vue'
 import ErrorBox from '@/components/ErrorBox.vue'
 import AppPagination from '@/components/AppPagination.vue'
 
+import ToastBox from '@/components/ToastBox.vue';
+import { useToast } from '@/composables/toast.js';
+import { useRouter } from 'vue-router';
+
+
+
 export default {
   components : {
-    TodoSimpleForm,
+    // TodoSimpleForm,
     TodoList,
     AppTitle,
     ErrorBox,
-    AppPagination
+    AppPagination,
+
+    ToastBox
+
   },
 
   setup(){   
+    
+    // 할일 생성 페이지로 이동
+      const router = useRouter();
+      const moveToCreate = () => {
+        router.push({
+          name: 'TodoCreate'
+        });
+      };
+
+
     // title
     const apptext = ref('오늘 할 일'); 
 
@@ -73,6 +97,15 @@ export default {
       return Math.ceil(totalTodos.value / limit);
     });
    
+
+    const {
+        showToast,
+        toastMessage,
+        triggerToast,
+        toastAlertType
+    } = useToast();
+      
+
 
     // 할일 검색 관련
     const searchText = ref('');
@@ -116,6 +149,7 @@ export default {
       } catch (err) {
         console.log(err);
         error.value = "자료를 불러오는데 실패했습니다.";
+         triggerToast('자료를 불러오는데 실패했습니다. ', 'danger');
       }
     }
     getTodo();
@@ -137,6 +171,7 @@ export default {
         }catch(err) {
           console.log(err);
           error.value = "서버 확인해 주세요.";
+         triggerToast('서버 확인해 주세요. ', 'danger');
         }
 
       };
@@ -152,10 +187,12 @@ export default {
         });
         // 웹브라우저의 todo 화면 표현
         todos.value[index].complete = checked;
+        triggerToast('상태를 변경하였습니다. ', 'success');
         
       } catch(err) {
         console.log(err);
         error.value = "업데이트에 실패하였습니다.";
+         triggerToast('업데이트에 실패하였습니다. ', 'danger');
       }
       
     }
@@ -168,10 +205,12 @@ export default {
       try {
         console.log(id);
         await axios.delete('http://localhost:3000/todos/' + id);
+        triggerToast("목록을 삭제하였습니다.", 'success');
         getTodo();
       } catch(err) {
         console.log(err);
         error.value = "삭제에 실패했습니다.";
+        triggerToast("삭제에 실패했습니다.", 'danger');
       }
     }
 
@@ -193,7 +232,16 @@ export default {
       totalTodos,
       nowPage,
       numberOfPages,
-      getTodo
+      getTodo,
+
+      
+        showToast,
+        toastMessage,
+        triggerToast,
+        toastAlertType, 
+
+        moveToCreate
+
     }
   }
 }
