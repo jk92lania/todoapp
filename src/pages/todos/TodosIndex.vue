@@ -199,7 +199,8 @@ export default {
     
     const deleteTodo = async (index) => {
       // console.log('delete' + index);
-      const id = todos.value[index].id;
+      // const id = todos.value[index].id;      
+      const id = index;
       error.value = '';
 
       try {
