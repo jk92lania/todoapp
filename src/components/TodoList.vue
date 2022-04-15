@@ -1,62 +1,70 @@
 <template>
 
-    <div class="card mt-2" v-for="(todo, index) in todos" v-bind:key="todo.id">
-        
-        <div 
-            class="card-body p-2 d-flex"
-            @click="moveToPage(todo.id)"
-            style="cursor:pointer"
-        >
+    <ListView :items="todos">        
+        <template #default="{item, index}">
 
-            <div class="form-check flex-grow-1">
-                <input 
-                    type="checkbox" 
-                    class="ml-2 mr-2" 
-                    :checked="todo.complete" 
-                    :id="todo.id" 
-                    @change="toggleTodo(index, $event)"
-                    @click.stop
-                >
-                <label 
-                    class="form-check-label"
-                    :class="{ todocss : todo.complete }" 
+            <div 
+                class="card-body p-2 d-flex"
+                @click="moveToPage(item.id)"
+                style="cursor:pointer"
+            >
+
+                <div class="form-check flex-grow-1">
+                    <input 
+                        type="checkbox" 
+                        class="ml-2 mr-2" 
+                        :checked="item.complete" 
+                        :id="item.id" 
+                        @change="toggleTodo(index, $event)"
+                        @click.stop
                     >
-                    {{ todo.subject }}
-                </label>
-            </div>
-            <!-- 삭제버튼 -->
-            <div>
-                <button 
-                    class="btn btn-danger btn-sm" 
-                    @click.stop="openModal(todo.id)"
-                >
-                    Delete
-                </button>
-            </div>
+                    <label 
+                        class="form-check-label"
+                        :class="{ todocss : item.complete }" 
+                        >
+                        {{ item.subject }}
+                    </label>
+                </div>
+                <!-- 삭제버튼 -->
+                <div>
+                    <button 
+                        class="btn btn-danger btn-sm" 
+                        @click.stop="openModal(item.id)"
+                    >
+                        Delete
+                    </button>
+                </div>
 
-        </div>
+            </div>
+        </template>
 
-    </div>
+    </ListView>
 
 <teleport to="#modal">
     <!-- 경고창 -->
-    <ModalWin 
+    <DeleteModal 
     v-if="showModal"
     @close="closeModal"
     @delete="deleteTodo"
-    />
+    @close-win="closeModal"
+    >
+    
+    </DeleteModal>
 
 </teleport>
 </template>
 <script>
     import { useRouter} from 'vue-router' 
-    import ModalWin from '@/components/ModalWin.vue'
+    import DeleteModal from '@/components/DeleteModal.vue'
     
-import {ref} from 'vue';
+    import {ref} from 'vue';
+    import ListView from '@/components/ListView.vue'
+
 
     export default {
         components : {
-            ModalWin
+            DeleteModal,
+            ListView
         },
 
         // props: ['todos']

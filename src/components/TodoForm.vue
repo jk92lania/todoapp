@@ -8,11 +8,15 @@
             
             <!-- 제목 수정 및 입력 창 -->
             <div class="col-6">
-                <div class="form-group">
-                    <label>제목</label>
-                    <input type="text" class="form-control" v-model="todo.subject">
-                    <div v-if="subjectError" class="red-text bold-text">{{ subjectError }}</div>
-                </div>
+                <!-- :프롭스명="변수전달" -->
+                <!-- 프롭스명="그냥 값" -->
+                <!-- v-model 하나만 값 받을 때는 v-model="todo.jubject" -->
+                <InputView 
+                    label="제목" 
+                    :err="subjectError"
+                    v-model:subject="todo.subject"
+                    
+                />
 
             </div>
 
@@ -63,11 +67,13 @@ import _ from 'lodash';
 
 import ToastBox from '@/components/ToastBox.vue';
 import { useToast } from '@/composables/toast.js';
+import InputView from '@/components/InputView.vue'
 
 
 export default {
     components : {
-        ToastBox
+        ToastBox,
+        InputView
     },
     props : {
         editing : {
@@ -78,8 +84,10 @@ export default {
     emits : ['update-todo', 'new-todo'],
 
     setup(props, {emit}) {
+
         
-       const route = useRoute();
+        
+        const route = useRoute();
         const router = useRouter();
 
 
@@ -106,7 +114,8 @@ export default {
             triggerToast,
             toastAlertType
 
-        } = useToast();    
+        } = useToast();
+        
 
 
         const getTodo = async () => {
@@ -178,11 +187,11 @@ export default {
             
             try {
                 let res;
-               const data = {
-                   subject: todo.value.subject,
-                   complete: todo.value.complete,
-                   body: todo.value.body
-               }
+                const data = {
+                    subject: todo.value.subject,
+                    complete: todo.value.complete,
+                    body: todo.value.body
+                }
 
                 if(props.editing) {
                     // 편집 시
