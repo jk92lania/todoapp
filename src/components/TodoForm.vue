@@ -181,6 +181,8 @@ export default {
         const subjectError = ref('');
 
         const onSave = async () => {
+
+            subjectError.value = '';
             // 제목 없으면 등록 및 편집 불가
             if(!todo.value.subject) {
                 subjectError.value = '제목을 입력하세요';
@@ -202,7 +204,10 @@ export default {
                     res = await axios.put(`todos/${todoId}`, data);
                     // console.log(res);
                     originalTodo.value = {...res.data};
+
+                    // TodoForm 에서 alertBox 띄운 것을 목록으로 옮겨 띄움
                     emit('update-todo', {});
+                    
                     triggerToast('데이터 업데이트에 성공하였습니다.', 'success');
 
                 } else {
