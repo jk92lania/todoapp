@@ -39,7 +39,8 @@
 
 <script>
 import {computed, ref, watch } from 'vue';
-import axios from 'axios'
+// import axios from 'axios'
+import axios from '@/axios.js'
 
 // import TodoSimpleForm from '@/components/TodoSimpleForm.vue'
 import TodoList from '@/components/TodoList.vue'
@@ -133,7 +134,7 @@ export default {
       try {
         // 서버에서 자료 요청 진행 후 결과
         // res에서 받는다(response)
-        const res = await axios.get(`http://localhost:3000/todos?subject_like=${searchText.value}&_page=${page}&_limit=${limit}&_sort=id&_order=desc`);
+        const res = await axios.get(`todos?subject_like=${searchText.value}&_page=${page}&_limit=${limit}&_sort=id&_order=desc`);
 
         // console.log(res.headers);
         totalTodos.value = res.headers["x-total-count"];
@@ -162,7 +163,7 @@ export default {
         error.value = '';
         try {
           // 데이터 베이스에 저장이 되어야 하는 데이터
-          await axios.post('http://localhost:3000/todos', {         
+          await axios.post('todos', {         
             subject: 추가되는할일.subject,
             complete: 추가되는할일.complete 
           });
@@ -182,7 +183,7 @@ export default {
       error.value = '';
       try {
         // 서버 DB 업데이트
-        await axios.patch('http://localhost:3000/todos/' + id, {
+        await axios.patch('todos/' + id, {
           complete : checked
         });
         // 웹브라우저의 todo 화면 표현
@@ -197,15 +198,13 @@ export default {
       
     }
     
-    const deleteTodo = async (index) => {
-      // console.log('delete' + index);
-      // const id = todos.value[index].id;      
+    const deleteTodo = async (index) => {    
       const id = index;
       error.value = '';
 
       try {
         console.log(id);
-        await axios.delete('http://localhost:3000/todos/' + id);
+        await axios.delete('todos/' + id);
         triggerToast("목록을 삭제하였습니다.", 'success');
         getTodo();
       } catch(err) {

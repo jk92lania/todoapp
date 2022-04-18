@@ -61,13 +61,15 @@
 
 <script>
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '@/axios.js'
 import {computed, ref} from 'vue';
 import _ from 'lodash';
 
 import ToastBox from '@/components/ToastBox.vue';
 import { useToast } from '@/composables/toast.js';
 import InputView from '@/components/InputView.vue'
+import {getCurrentInstance} from 'vue'
 
 
 export default {
@@ -83,8 +85,10 @@ export default {
     },
     emits : ['update-todo', 'new-todo'],
 
-    setup(props, {emit}) {
+    setup(props) {
 
+        
+        const {emit} = getCurrentInstance();
         
         
         const route = useRoute();
@@ -122,7 +126,7 @@ export default {
             // 내용 가져올 때 로딩
             loading.value = true;
             try {
-                const res = await axios.get(`http://localhost:3000/todos/${todoId}`);            
+                const res = await axios.get(`todos/${todoId}`);            
                 todo.value = {...res.data }; // spread 연산으로 내용물 만 복사
                 originalTodo.value = { ...res.data }; // spread 연산으로 내용물 만 복사
                 
@@ -195,7 +199,7 @@ export default {
 
                 if(props.editing) {
                     // 편집 시
-                    res = await axios.put(`http://localhost:3000/todos/${todoId}`, data);
+                    res = await axios.put(`todos/${todoId}`, data);
                     // console.log(res);
                     originalTodo.value = {...res.data};
                     emit('update-todo', {});
@@ -203,7 +207,7 @@ export default {
 
                 } else {
                     // 신규 등록 시
-                    res = await axios.post(`http://localhost:3000/todos`, data);
+                    res = await axios.post(`todos`, data);
                     emit('new-todo', {});
                     triggerToast('데이터 저장에 성공하였습니다.', 'success');
                 }
