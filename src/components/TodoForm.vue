@@ -15,9 +15,7 @@
                     label="제목" 
                     :err="subjectError"
                     v-model:subject="todo.subject"
-                    
                 />
-
             </div>
 
             <!-- 상태 수정 창 -->
@@ -69,7 +67,7 @@ import _ from 'lodash';
 import ToastBox from '@/components/ToastBox.vue';
 import { useToast } from '@/composables/toast.js';
 import InputView from '@/components/InputView.vue'
-import {getCurrentInstance} from 'vue'
+// import {getCurrentInstance} from 'vue'
 
 
 export default {
@@ -85,12 +83,8 @@ export default {
     },
     emits : ['update-todo', 'new-todo'],
 
-    setup(props) {
-
-        
-        const {emit} = getCurrentInstance();
-        
-        
+    setup(props) {        
+        // const {emit} = getCurrentInstance(); 
         const route = useRoute();
         const router = useRouter();
 
@@ -101,8 +95,6 @@ export default {
             complete: false,
             body : ''
         });
-
-
 
         // 원래 가지고 있었던 todo 저장를 저장하고 있는 객체
         const originalTodo = ref(null);
@@ -117,7 +109,6 @@ export default {
             toastMessage,
             triggerToast,
             toastAlertType
-
         } = useToast();
         
 
@@ -154,8 +145,6 @@ export default {
             getTodo();
 
         }
-
-
         const toggleTodoState = () => {
             todo.value.complete = !todo.value.complete
         }
@@ -189,7 +178,6 @@ export default {
                 triggerToast('제목을 입력해 주세요.', 'danger');
                 return;
             }
-
             
             try {
                 let res;
@@ -206,23 +194,26 @@ export default {
                     originalTodo.value = {...res.data};
 
                     // TodoForm 에서 alertBox 띄운 것을 목록으로 옮겨 띄움
-                    emit('update-todo', {});
-                    
+                    // emit('update-todo', {});
+
                     triggerToast('데이터 업데이트에 성공하였습니다.', 'success');
 
                 } else {
                     // 신규 등록 시
                     res = await axios.post(`todos`, data);
-                    emit('new-todo', {});
+                    // emit('new-todo', {});
+                    
+                    todo.value.subject = '';
+                    todo.value.body = '';
+                    
                     triggerToast('데이터 저장에 성공하였습니다.', 'success');
                 }
-
-                todo.value.subject = '';
-                    todo.value.body = '';
-                    // 목록으로 돌아간다.
+                // 신규등록인 경우에만 목록으로 돌아간다.
+                if(!props.editing) {
                     router.push({
-                         name: 'Todos'
+                            name: 'Todos'
                     });
+                }
 
 
             }catch(error) {

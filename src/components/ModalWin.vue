@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import getCurrentInstance from 'vue'
+import {getCurrentInstance} from 'vue'
 export default {
     emits : ['close-win'],
     setup() {

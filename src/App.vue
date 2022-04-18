@@ -1,6 +1,4 @@
 <template>
-
-
 <!-- 상단메뉴 -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -13,7 +11,7 @@
 
   <!-- 라우터 화면 보여주기 -->
   <div class="container">
-  <router-view @update-todo-toast="updateTodo" @new-todo-toast="newTodo"/>
+  <router-view />
   </div>
 
 <!-- 안내창 -->
@@ -26,22 +24,14 @@
 import ToastBox from '@/components/ToastBox.vue';
 import { useToast } from '@/composables/toast.js';
 
-
   export default {
     components : {
     ToastBox
   },
-    setup() {
-      const updateTodo = () => {
-        console.log('업뎃');
-        triggerToast('목록이 업데이트 되었습니다.', 'success')
-
-      };
-      const newTodo = () => { 
-        console.log('새글');
-        triggerToast('새로운 글이 등록 되었습니다.', 'success')
-      };
-
+    setup() {    
+      
+      
+      
       // toastBox
       const {
           showToast,
@@ -51,8 +41,6 @@ import { useToast } from '@/composables/toast.js';
       } = useToast();
 
       return {
-        updateTodo,
-        newTodo,
 
         showToast,
         toastMessage,
