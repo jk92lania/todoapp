@@ -30,7 +30,6 @@
                             type="button"
                         >
                             {{ todo.complete ? 'Complete' : 'Incomplete' }}
-
                         </button>
                     </div>
                 </div>
@@ -50,11 +49,7 @@
 
     </form>
 
-    <!-- 안내창 -->
-    <Transition name="fade">
-        <ToastBox v-if="showToast" :message="toastMessage" :type="toastAlertType"/>
-
-    </Transition>
+    
 </template>
 
 <script>
@@ -64,15 +59,11 @@ import axios from '@/axios.js'
 import {computed, ref} from 'vue';
 import _ from 'lodash';
 
-import ToastBox from '@/components/ToastBox.vue';
 import { useToast } from '@/composables/toast.js';
 import InputView from '@/components/InputView.vue'
-// import {getCurrentInstance} from 'vue'
-
 
 export default {
     components : {
-        ToastBox,
         InputView
     },
     props : {
@@ -253,17 +244,5 @@ export default {
 <style scoped>
     .bold-text {
         font-weight: 900;
-    }
-    .fade-enter-active,
-    .fade-leave-active {
-        transition: opacity 0.5s ease;
-    }
-    .fade-enter-from,
-    .fade-leave-to {
-        opacity: 0;
-    }
-    .fade-enter-to,
-    .fade-leave-from {
-        opacity: 1;
-    }
+    }    
 </style>

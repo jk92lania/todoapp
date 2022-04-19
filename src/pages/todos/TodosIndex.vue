@@ -30,8 +30,6 @@
     <!-- pagination -->
     <AppPagination :currentPage="nowPage" :allPage="numberOfPages" @page-show="getTodo"/>
 
-    <ToastBox v-if="showToast" :message="toastMessage" :type="toastAlertType"/>
-
   </div>  
 
 
@@ -48,7 +46,6 @@ import AppTitle from '@/components/AppTitle.vue'
 import ErrorBox from '@/components/ErrorBox.vue'
 import AppPagination from '@/components/AppPagination.vue'
 
-import ToastBox from '@/components/ToastBox.vue';
 import { useToast } from '@/composables/toast.js';
 import { useRouter } from 'vue-router';
 
@@ -60,10 +57,7 @@ export default {
     TodoList,
     AppTitle,
     ErrorBox,
-    AppPagination,
-
-    ToastBox
-
+    AppPagination
   },
 
   setup(){   
@@ -82,7 +76,7 @@ export default {
 
 
     // 할일 목록(배열)을 저장
-    const todos = ref([ ]);
+    const todos = ref([]);
 
     const error = ref('');
 
@@ -99,6 +93,7 @@ export default {
     });
    
 
+    // toastbox 관련
     const {
         showToast,
         toastMessage,
